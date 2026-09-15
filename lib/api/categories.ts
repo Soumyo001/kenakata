@@ -1,12 +1,13 @@
 import { CategoryType } from "../types";
 import { apiFetch } from "./client";
+import { normalizeCategory } from "../helpers/api-helper";
 
 export async function getCategories() {
     const categories: CategoryType[] = await apiFetch<CategoryType[]>('/categories', {revalidate: 3600});
-    return categories;
+    return categories.map(normalizeCategory);
 }
 
 export async function getCategoryById(id: string | number) {
     const category: CategoryType = await apiFetch<CategoryType>(`/categories/${id}`, {revalidate: 3600});
-    return category;
+    return normalizeCategory(category);
 }

@@ -6,7 +6,7 @@ type FetchOptions = RequestInit & {
 
 export async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T> {
     const { revalidate, ...init } = options;
-
+    // console.log("LIINNKK", `${BASE_URL}${path}`)
     const res = await fetch(`${BASE_URL}${path}`, {
         ...init,
         headers: {

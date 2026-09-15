@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   images: {
       remotePatterns: [
-          { protocol: "https", hostname: "**" },
+        { protocol: "https", hostname: "**" },
+        { protocol: "http", hostname: "**" }
       ],
   },
 };

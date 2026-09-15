@@ -21,8 +21,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kenakata",
-  description: "Your one and only place to buy everything",
+    title: { default: "Kenakata", template: "%s | Kenakata" },
+    description: "Your one and only place to buy everything",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
