@@ -29,13 +29,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >
       <body className="min-h-full flex flex-col">
         <AppThemeProvider>
-          <main className="flex-1 min-w-0 w-full flex flex-col">
+          <div className="flex-1 min-w-0 w-full flex flex-col">
             {children}
-          </main>
+          </div>
           <Toaster richColors position="top-right"/>
         </AppThemeProvider>
       </body>

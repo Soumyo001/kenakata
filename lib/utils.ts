@@ -7,3 +7,7 @@ export function sanitizeImages(images: string[] | undefined): string[] {
         .filter((img) => img?.startsWith("http"));
     return cleaned.length > 0 ? cleaned : ["/placeholder.png"];
 }
+
+export function formatPrice(price: number): string {
+    return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(price);
+}
