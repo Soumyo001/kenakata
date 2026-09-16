@@ -2,7 +2,7 @@ import { useSyncExternalStore } from "react";
 import { CartItemType, ProductType } from "@/lib/types";
 import { CART_STORAGE_KEY } from "@/lib/data/constants";
 import { CartSchema } from "@/lib/validators/schema-validators/cart.schema";
-import { addCartItem, getCartTotals } from "@/lib/helpers/cart-helper";
+import { addCartItem, getCartTotals, removeCartItem, updateCartItemQuantity } from "@/lib/helpers/cart-helper";
 
 const EMPTY_CART: CartItemType[] = [];
 const listeners = new Set<() => void>();
@@ -12,6 +12,10 @@ const listeners = new Set<() => void>();
 // parsed result and only re-parse when the raw string actually changes.
 let cachedRaw: string | null = null;
 let cachedItems: CartItemType[] = EMPTY_CART;
+
+export function clearCart(): void {
+    writeCart(EMPTY_CART);
+}
 
 function readCart(): CartItemType[] {
     const raw = localStorage.getItem(CART_STORAGE_KEY);
@@ -51,5 +55,13 @@ export function useCart() {
         writeCart(addCartItem(readCart(), product, quantity));
     };
 
-    return { items, totalItems, subtotal, addItem };
+    const removeItem = (id: number) => {
+        writeCart(removeCartItem(readCart(), id));
+    };
+
+    const updateQuantity = (id: number, quantity: number) => {
+        writeCart(updateCartItemQuantity(readCart(), id, quantity));
+    };
+
+    return { items, totalItems, subtotal, addItem, removeItem, updateQuantity };
 }

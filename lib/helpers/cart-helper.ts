@@ -1,5 +1,5 @@
 import { CartItemType, ProductType } from "@/lib/types";
-import { MAX_CART_QUANTITY } from "@/lib/data/constants";
+import { FREE_SHIPPING_THRESHOLD, MAX_CART_QUANTITY, SHIPPING_FEE } from "@/lib/data/constants";
 
 export function addCartItem(items: CartItemType[], product: ProductType, quantity: number = 1): CartItemType[] {
     const existing = items.find((item) => item.id === product.id);
@@ -32,4 +32,19 @@ export function getCartTotals(items: CartItemType[]) {
         }),
         { totalItems: 0, subtotal: 0 }
     );
+}
+
+export function removeCartItem(items: CartItemType[], id: number): CartItemType[] {
+    return items.filter((item) => item.id !== id);
+}
+
+export function updateCartItemQuantity(items: CartItemType[], id: number, quantity: number): CartItemType[] {
+    // Clamped rather than trusted: removing an item is a deliberate action (the trash button), not quantity 0.
+    const clamped = Math.min(Math.max(quantity, 1), MAX_CART_QUANTITY);
+    return items.map((item) => (item.id === id ? { ...item, quantity: clamped } : item));
+}
+
+export function getOrderTotals(subtotal: number) {
+    const shipping = subtotal === 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+    return { subtotal, shipping, total: subtotal + shipping };
 }
