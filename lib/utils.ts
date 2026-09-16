@@ -1,13 +1,13 @@
 export { cn } from "cn"
 export const FALLBACK_IMAGE = "/placeholder.png";
 
-const DEAD_IMAGE_HOSTS = ["placeimg.com"];
+const REJECTED_IMAGE_HOSTS = ["placeimg.com", "placehold.co"];
 
 function isLikelyImageUrl(raw: string): boolean {
     try {
         const url = new URL(raw);
         if (url.protocol !== "http:" && url.protocol !== "https:") return false;
-        if (DEAD_IMAGE_HOSTS.includes(url.hostname.replace(/^www\./, ""))) return false;
+        if (REJECTED_IMAGE_HOSTS.includes(url.hostname.replace(/^www\./, ""))) return false;
         if (url.pathname === "" || url.pathname === "/") return false;
         return true;
     } catch {

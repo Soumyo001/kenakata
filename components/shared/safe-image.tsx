@@ -1,5 +1,4 @@
 "use client";
-
 import Image from "next/image";
 import { useState } from "react";
 import { FALLBACK_IMAGE } from "@/lib/utils";
@@ -21,7 +20,7 @@ const SafeImage = ({ src, alt, sizes, className }: SafeImageProps) => {
             src={imgSrc}
             alt={alt}
             fill
-            loading="lazy"
+            loading="eager"
             sizes={sizes}
             className={className}
             onError={() => setFailedSrc(src)}

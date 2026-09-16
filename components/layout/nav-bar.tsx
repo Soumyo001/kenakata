@@ -8,13 +8,13 @@ const Navbar = () => {
   return (
     <header className='sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur'>
         <Container className="flex items-center justify-between h-16 gap-4">
-            <Link className='flex items-center gap-2 py-1' href="/">
-                <div className='w-8 h-8 shrink-0 flex justify-center items-center rounded-md bg-blue-100 dark:bg-blue-950'>
-                    <Store className='w-4 h-4 text-blue-600 dark:text-blue-400'/>
+            <Link className="flex min-w-0 items-center gap-2 py-1" href="/">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-blue-100 dark:bg-blue-950">
+                    <Store className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 </div>
-                <span className='text-base font-medium'>Kenakata.com</span>
+                <span className="hidden truncate text-base font-medium xs:inline">Kenakata.com</span>
             </Link>
-            <nav className='flex items-center gap-2'>
+            <nav className="flex shrink-0 items-center gap-2">
                 <Button variant={"ghost"} asChild>
                     <Link href={"/products"}>
                         Products
@@ -24,7 +24,6 @@ const Navbar = () => {
                     variant={'ghost'}
                     size={'icon'}
                     asChild
-                    aria-label='Cart'
                 >
                     <Link href={'/cart'}>
                         <ShoppingCart className='w-5 h-5'/>

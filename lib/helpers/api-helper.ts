@@ -1,7 +1,7 @@
-import { ProductType, ProductQueryType, CategoryType } from "../types";
+import { ProductType, CategoryType } from "../types";
 import { sanitizeImages } from "../utils";
 
-export function buildQuery(q: ProductQueryType): string {
+export function buildQuery(q: Record<string, string|number|undefined>): string {
     const params = new URLSearchParams();
     Object.entries(q).forEach(([key, value]) => {
         if(value !== undefined && value !== "") params.set(key, String(value));

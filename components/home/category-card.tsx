@@ -5,7 +5,7 @@ import { CategoryType } from "@/lib/types";
 const CategoryCard = ({ category }: { category: CategoryType }) => {
     return (
         <Link
-            href={`/products?categoryId=${category.id}`}
+            href={`/products?category=${category.id}`}
             className="group relative aspect-4/3 overflow-hidden rounded-xl"
         >
             <SafeImage

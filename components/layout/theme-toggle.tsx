@@ -9,7 +9,6 @@ const ThemeToggle = () => {
     <Button
       variant={"ghost"}
       size={"icon"}
-      aria-label="Toggle Theme"
       onClick={() => setTheme(resolvedTheme === "dark" ? "light":"dark")}
     >
       <Sun className="w-5 h-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"/>

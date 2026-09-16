@@ -1,5 +1,5 @@
 import { getProducts } from "@/lib/api/products";
-import ProductCard from "@/components/product/product-card";
+import ProductGrid from "@/components/product/product-grid";
 import Container from "@/components/layout/container";
 
 const FeaturedProducts = async () => {
@@ -9,11 +9,7 @@ const FeaturedProducts = async () => {
         <section>
             <Container className="py-12">
                 <h2 className="mb-6 text-2xl font-bold">Featured Products</h2>
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                    {products.map((product) => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
-                </div>
+                <ProductGrid products={products}/>
             </Container>
         </section>
     );
