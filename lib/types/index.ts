@@ -2,3 +2,4 @@ export * from "@/lib/types/category.type";
 export * from "@/lib/types/product.type";
 export * from "@/lib/types/product-query.type";
 export * from "@/lib/types/listing.type";
+export * from "@/lib/types/cart.type";

@@ -1,8 +1,9 @@
 import ThemeToggle from "./theme-toggle"
-import { Store, ShoppingCart } from "lucide-react"
+import { Store } from "lucide-react"
 import Link from "next/link"
 import { Button } from "../ui/button"
 import Container from "./container"
+import CartButton from "./cart-button"
 
 const Navbar = () => {
   return (
@@ -20,15 +21,7 @@ const Navbar = () => {
                         Products
                     </Link>
                 </Button>
-                <Button
-                    variant={'ghost'}
-                    size={'icon'}
-                    asChild
-                >
-                    <Link href={'/cart'}>
-                        <ShoppingCart className='w-5 h-5'/>
-                    </Link>
-                </Button>
+                <CartButton/>
                 <ThemeToggle/>
             </nav>
         </Container>

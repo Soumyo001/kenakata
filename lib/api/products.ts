@@ -1,5 +1,5 @@
 import { ProductType, ProductQueryType, PaginatedType } from "../types";
-import { apiFetch } from "./client";
+import { apiFetch, ApiError } from "./client";
 import { buildQuery, normalizeProduct } from "../helpers/api-helper";
 import { ListingParamsSchemaType } from "../validators/schema-validators/listing-params.schema";
 import { filterByPrice, sortProducts, paginate } from "../helpers/listing-helper";
@@ -10,9 +10,17 @@ export async function getProducts(queries: ProductQueryType = {}): Promise<Produ
     return products.map(normalizeProduct);
 }
 
-export async function getProductById(id: string|number): Promise<ProductType> {
-    const product: ProductType = await apiFetch<ProductType>(`/products/${id}`, {revalidate: 300});
-    return normalizeProduct(product);
+export async function getProductById(id: string): Promise<ProductType|null> {
+    // check numeric id
+    if (!/^\d+$/.test(id)) return null;
+    
+    try {
+        const product: ProductType = await apiFetch<ProductType>(`/products/${id}`, { revalidate: 300 });
+        return normalizeProduct(product);
+    } catch (err) {
+        if (err instanceof ApiError && (err.status === 400 || err.status === 404)) return null;
+        throw err;
+    }
 }
 
 export async function getRelatedProducts(categoryId: number, excludeId: number): Promise<ProductType[]> {

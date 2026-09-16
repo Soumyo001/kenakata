@@ -8,9 +8,10 @@ type SafeImageProps = {
     alt: string;
     sizes?: string;
     className?: string;
+    preload?: boolean;
 };
 
-const SafeImage = ({ src, alt, sizes, className }: SafeImageProps) => {
+const SafeImage = ({ src, alt, sizes, className, preload }: SafeImageProps) => {
     const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
     const imgSrc = !src || src === failedSrc ? FALLBACK_IMAGE : src;
@@ -20,7 +21,7 @@ const SafeImage = ({ src, alt, sizes, className }: SafeImageProps) => {
             src={imgSrc}
             alt={alt}
             fill
-            loading="eager"
+            preload={preload}
             sizes={sizes}
             className={className}
             onError={() => setFailedSrc(src)}

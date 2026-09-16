@@ -8,6 +8,16 @@ type FetchOptions = RequestInit & {
     revalidate?: number | false
 };
 
+export class ApiError extends Error {
+    status: number;
+
+    constructor(message: string, status: number) {
+        super(message);
+        this.name = "ApiError";
+        this.status = status;
+    }
+}
+
 export async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T> {
     const { revalidate, ...init } = options;
     // console.log("LIINNKK", `${BASE_URL}${path}`)
@@ -26,7 +36,7 @@ export async function apiFetch<T>(path: string, options: FetchOptions = {}): Pro
 
     if(!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body?.message ?? `Request failed: ${res.status}`);
+        throw new ApiError(body?.message ?? `Request failed: ${res.status}`, res.status);
     }
     return res.json() as Promise<T>;
 }
