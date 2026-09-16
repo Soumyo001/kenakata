@@ -25,7 +25,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
                 </CardContent>
 
                 <CardFooter className="p-4 pt-0">
-                    <span className="text-lg font-bold">{formatPrice(product.price)}</span>
+                    <span className="min-w-0 truncate text-lg font-bold">{formatPrice(product.price)}</span>
                 </CardFooter>
             </Card>
         </Link>

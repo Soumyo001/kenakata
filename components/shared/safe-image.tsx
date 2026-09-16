@@ -4,15 +4,17 @@ import Image from "next/image";
 import { useState } from "react";
 import { FALLBACK_IMAGE } from "@/lib/utils";
 
-type ProductImageProps = {
-    src:       string;
-    alt:       string;
-    sizes?:    string;
+type SafeImageProps = {
+    src: string;
+    alt: string;
+    sizes?: string;
     className?: string;
 };
 
-const SafeImage = ({ src, alt, sizes, className }: ProductImageProps) => {
-    const [imgSrc, setImgSrc] = useState<string>(src || FALLBACK_IMAGE);
+const SafeImage = ({ src, alt, sizes, className }: SafeImageProps) => {
+    const [failedSrc, setFailedSrc] = useState<string | null>(null);
+
+    const imgSrc = !src || src === failedSrc ? FALLBACK_IMAGE : src;
 
     return (
         <Image
@@ -22,7 +24,7 @@ const SafeImage = ({ src, alt, sizes, className }: ProductImageProps) => {
             loading="lazy"
             sizes={sizes}
             className={className}
-            onError={() => setImgSrc(FALLBACK_IMAGE)}
+            onError={() => setFailedSrc(src)}
         />
     );
 };

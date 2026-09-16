@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 const Hero = () => {
     return (
-        <section className="border-b bg-linear-to-b from-blue-50 to-background dark:from-blue-950/30">
+        <section className="border-b bg-linear-to-b from-blue-100/50 to-background dark:from-blue-950/30">
             <Container className="py-20 text-center md:py-28">
                 <h1 className="text-4xl font-bold tracking-tight md:text-6xl">
                     Everything you need,{" "}

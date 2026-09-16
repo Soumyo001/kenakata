@@ -1,8 +1,8 @@
-import ThemeToggle from './theme-toggle'
-import { Store, ShoppingCart } from 'lucide-react'
-import Link from 'next/link'
-import { Button } from '../ui/button'
-import Container from './container'
+import ThemeToggle from "./theme-toggle"
+import { Store, ShoppingCart } from "lucide-react"
+import Link from "next/link"
+import { Button } from "../ui/button"
+import Container from "./container"
 
 const Navbar = () => {
   return (

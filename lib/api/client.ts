@@ -1,5 +1,9 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+if (!BASE_URL) {
+    throw new Error("NEXT_PUBLIC_API_URL is not set.");
+}
+
 type FetchOptions = RequestInit & {
     revalidate?: number | false
 };
