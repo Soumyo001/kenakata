@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { RegisterSchema } from "@/lib/validators/schema-validators/register.schema";
-import { registerRequest, loginRequest, getProfile } from "@/lib/api/auth";
-import { setAuthCookies } from "@/lib/auth/session";
 import { ApiError } from "@/lib/api/client";
+import { getProfile, loginRequest } from "@/lib/api/auth";
+import { createUser, isEmailRegistered } from "@/lib/api/users";
+import { setSessionCookie, toPublicUser } from "@/lib/auth/session";
+import { RegisterSchema } from "@/lib/validators/schema-validators/register.schema";
 import { DEFAULT_AVATAR } from "@/lib/data/constants";
 
 export const POST = async (req: Request) => {
@@ -19,20 +19,27 @@ export const POST = async (req: Request) => {
         }
 
         const { name, email, password } = parsed.data;
-        await registerRequest({ name, email, password, avatar: DEFAULT_AVATAR });
 
-        const tokens = await loginRequest({ email, password });
-        const user = await getProfile(tokens.access_token);
+        if (await isEmailRegistered(email)) {
+            const message = "An account with this email already exists";
+            return NextResponse.json({ message, errors: { email: [message] } }, { status: 409 });
+        }
+        await createUser({
+            name,
+            email,
+            password,
+            avatar: `${DEFAULT_AVATAR}?u=${encodeURIComponent(email)}`,
+        });
 
-        setAuthCookies(await cookies(), tokens);
+        const { access_token } = await loginRequest({ email, password });
+        const user = toPublicUser(await getProfile(access_token));
 
-        return NextResponse.json({ message: "Account created", user }, { status: 201 });
+        const response = NextResponse.json({ message: "Account created", user }, { status: 201 });
+        setSessionCookie(response, access_token);
+        return response;
     } catch (err: any) {
-        if (err instanceof ApiError) {
-            return NextResponse.json(
-                { message: "Could not create account. The email may already be in use." },
-                { status: err.status }
-            );
+        if (err instanceof ApiError && err.status === 400) {
+            return NextResponse.json({ message: err.message }, { status: 400 });
         }
         return NextResponse.json({ message: `Server error: ${err.message}` }, { status: 500 });
     }

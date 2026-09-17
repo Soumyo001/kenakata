@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { LoginSchema } from "@/lib/validators/schema-validators/login.schema";
-import { loginRequest, getProfile } from "@/lib/api/auth";
-import { setAuthCookies } from "@/lib/auth/session";
 import { ApiError } from "@/lib/api/client";
+import { getProfile, loginRequest } from "@/lib/api/auth";
+import { setSessionCookie, toPublicUser } from "@/lib/auth/session";
+import { LoginSchema } from "@/lib/validators/schema-validators/login.schema";
 
 export const POST = async (req: Request) => {
     try {
@@ -17,12 +16,12 @@ export const POST = async (req: Request) => {
             );
         }
 
-        const tokens = await loginRequest(parsed.data);
-        const user = await getProfile(tokens.access_token);
+        const { access_token } = await loginRequest(parsed.data);
+        const user = toPublicUser(await getProfile(access_token));
 
-        setAuthCookies(await cookies(), tokens);
-
-        return NextResponse.json({ message: "Logged in", user }, { status: 200 });
+        const response = NextResponse.json({ message: "Logged in", user }, { status: 200 });
+        setSessionCookie(response, access_token);
+        return response;
     } catch (err: any) {
         if (err instanceof ApiError && err.status === 401) {
             return NextResponse.json({ message: "Invalid email or password" }, { status: 401 });

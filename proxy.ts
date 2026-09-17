@@ -1,40 +1,37 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { decodeJwt } from "jose";
-import { ACCESS_TOKEN_COOKIE } from "@/lib/data/constants";
+import { SESSION_COOKIE_NAME } from "@/lib/data/constants";
+import { getSafeRedirect, getTokenLifetime } from "@/lib/helpers/auth-helper";
 
 const PROTECTED_ROUTES = ["/checkout", "/account", "/admin"];
 const AUTH_ROUTES = ["/login", "/register"];
 
-const matchesPrefix = (pathname: string, routes: string[]) =>
-    routes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
-
-function hasLiveToken(token: string | undefined): boolean {
-    if (!token) return false;
-    try {
-        const { exp } = decodeJwt(token);
-        return typeof exp === "number" && exp * 1000 > Date.now();
-    } catch {
-        return false;
-    }
+function matchesRoute(pathname: string, routes: string[]): boolean {
+    return routes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 }
 
-export default function proxy(req: NextRequest) {
-    const { pathname } = req.nextUrl;
-    const isAuthed = hasLiveToken(req.cookies.get(ACCESS_TOKEN_COOKIE)?.value);
+export function proxy(request: NextRequest) {
+    const { pathname, search } = request.nextUrl;
+    const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
 
-    if (!isAuthed && matchesPrefix(pathname, PROTECTED_ROUTES)) {
-        const url = new URL("/login", req.url);
-        url.searchParams.set("redirect", pathname);
-        return NextResponse.redirect(url);
+    const hasSession = token !== undefined && getTokenLifetime(token) > 0;
+
+    if (!hasSession && matchesRoute(pathname, PROTECTED_ROUTES)) {
+        const loginUrl = new URL("/login", request.url);
+        loginUrl.searchParams.set("redirect", pathname + search);
+
+        const response = NextResponse.redirect(loginUrl);
+        if (token) response.cookies.delete(SESSION_COOKIE_NAME);
+        return response;
     }
 
-    if (isAuthed && matchesPrefix(pathname, AUTH_ROUTES)) {
-        return NextResponse.redirect(new URL("/", req.url));
+    if (hasSession && matchesRoute(pathname, AUTH_ROUTES)) {
+        const target = getSafeRedirect(request.nextUrl.searchParams.get("redirect"));
+        return NextResponse.redirect(new URL(target, request.url));
     }
 
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+    matcher: ["/checkout/:path*", "/account/:path*", "/admin/:path*", "/login", "/register"],
 };

@@ -1,16 +1,22 @@
 export type UserRoleType = "customer" | "admin";
 
 export type UserType = {
-    id: number;
-    name: string;
-    email: string;
-    role: UserRoleType;
+    id:     number;
+    email:  string;
+    name:   string;
+    role:   UserRoleType;
     avatar: string;
-    creationAt?: string;
-    updatedAt?: string;
 };
 
-export type AuthTokensType = {
-    access_token: string;
-    refresh_token: string;
+export type PlatziUserType = UserType & {
+    password:    string;
+    creationAt?: string;
+    updatedAt?:  string;
+};
+
+export type CreateUserPayloadType = {
+    name:     string;
+    email:    string;
+    password: string;
+    avatar:   string;
 };
