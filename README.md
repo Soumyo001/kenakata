@@ -373,7 +373,6 @@ kenakata/
 ├── next.config.ts
 ├── package.json
 ├── tsconfig.json
-├── .env.example
 └── README.md
 ```
 
@@ -728,16 +727,16 @@ npm install
 
 ### Environment Setup
 
-Create `.env.local` from the provided example:
+Create `.env`:
 
 ```bash
-cp .env.example .env.local
+touch .env
 ```
 
-Configure the API base URL:
+Add the required API base URL:
 
 ```env
-NEXT_PUBLIC_API_URL=<your-api-base-url>
+NEXT_PUBLIC_API_URL=https://api.escuelajs.co/api/v1
 ```
 
 ### Start the Development Server
