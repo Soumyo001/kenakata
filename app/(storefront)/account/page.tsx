@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireUser } from "@/lib/auth/session";
+import TransactionHistory from "@/components/account/transaction-history";
 
 export const metadata: Metadata = {
     title: "My account",
@@ -39,6 +40,8 @@ const AccountPage = async () => {
                     <Link href="/cart">View cart</Link>
                 </Button>
             </div>
+
+            <TransactionHistory userId={user.id} />
         </Container>
     );
 };

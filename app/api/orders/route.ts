@@ -34,8 +34,14 @@ export const POST = async (req: Request) => {
         
         const { total } = getOrderTotals(getCartTotals(items).subtotal);
         const orderId = `KK-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
-
-        return NextResponse.json({ message: "Order placed", orderId, total }, { status: 201 });
+        const createdAt = new Date().toISOString();
+        
+        return NextResponse.json({
+            message: "Order placed",
+            orderId,
+            total,
+            createdAt,
+        }, { status: 201 });
     } catch (err: any) {
         return NextResponse.json({ message: `Server error: ${err.message}` }, { status: 500 });
     }

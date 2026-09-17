@@ -10,6 +10,8 @@ export const CART_OWNER_KEY = "kenakata-cart-owner";
 
 export const MAX_CART_QUANTITY = 20;
 
+export const ORDER_HISTORY_STORAGE_KEY = "kenakata-orders";
+
 export const SHIPPING_FEE = 5;
 export const FREE_SHIPPING_THRESHOLD = 100;
 

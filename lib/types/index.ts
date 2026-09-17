@@ -6,3 +6,4 @@ export * from "@/lib/types/cart.type";
 export * from "@/lib/types/order.type";
 export * from "@/lib/types/user.type";
 export * from "@/lib/types/auth.type";
+export * from "@/lib/types/order-history.type";

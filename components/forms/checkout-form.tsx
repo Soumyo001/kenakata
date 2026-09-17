@@ -21,6 +21,7 @@ import {
     ShippingDetailsSchema,
 } from "@/lib/validators/schema-validators/checkout.schema";
 import { UserType } from "@/lib/types";
+import { saveOrderHistoryItem } from "@/hooks/use-order-history";
 
 const PAYMENT_LABELS: Record<PaymentMethodType, { title: string; description: string }> = {
     cod:  { title: "Cash on delivery", description: "Pay when your order arrives" },
@@ -76,6 +77,14 @@ const CheckoutForm = ({ items, user }: CheckoutFormProps) => {
             const data = await res.json();
 
             if (!res.ok) throw new Error(data.message);
+
+            saveOrderHistoryItem(user.id, {
+                orderId: data.orderId,
+                createdAt: data.createdAt,
+                paymentMethod: values.paymentMethod,
+                total: data.total,
+                items,
+            });
 
             setIsRedirecting(true);
             router.replace(`/checkout/success?order=${data.orderId}`);
