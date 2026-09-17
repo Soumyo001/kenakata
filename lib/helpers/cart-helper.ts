@@ -24,6 +24,31 @@ export function addCartItem(items: CartItemType[], product: ProductType, quantit
     ];
 }
 
+export function mergeCartItems(
+    currentItems: CartItemType[],
+    incomingItems: CartItemType[]
+): CartItemType[] {
+    return incomingItems.reduce<CartItemType[]>((items, incoming) => {
+        const existing = items.find((item) => item.id === incoming.id);
+
+        if (!existing) {
+            return [...items, incoming];
+        }
+
+        return items.map((item) =>
+            item.id === incoming.id
+                ? {
+                      ...item,
+                      quantity: Math.min(
+                          item.quantity + incoming.quantity,
+                          MAX_CART_QUANTITY
+                      ),
+                  }
+                : item
+        );
+    }, [...currentItems]);
+}
+
 export function getCartTotals(items: CartItemType[]) {
     return items.reduce(
         (totals, item) => ({

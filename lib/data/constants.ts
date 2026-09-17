@@ -6,6 +6,8 @@ export const DEFAULT_SORT = SORT_VALUES[0];
 
 export const CART_STORAGE_KEY = "kenakata-cart";
 
+export const CART_OWNER_KEY = "kenakata-cart-owner";
+
 export const MAX_CART_QUANTITY = 20;
 
 export const SHIPPING_FEE = 5;

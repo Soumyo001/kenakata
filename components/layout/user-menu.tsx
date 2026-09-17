@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -17,6 +16,10 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { UserType } from "@/lib/types";
+import {
+    activateGuestCart,
+    activateUserCart,
+} from "@/hooks/use-cart";
 
 const UserMenu = () => {
     const router = useRouter();
@@ -28,9 +31,20 @@ const UserMenu = () => {
 
         fetch("/api/auth/session", { signal: controller.signal })
             .then((res) => (res.ok ? res.json() : { user: null }))
-            .then((data: { user: UserType | null }) => setUser(data.user))
+            .then((data: { user: UserType | null }) => {
+                if (data.user) {
+                    activateUserCart(data.user.id);
+                } else {
+                    activateGuestCart();
+                }
+            
+                setUser(data.user);
+            })
             .catch((err) => {
-                if (err.name !== "AbortError") setUser(null);
+                if (err.name !== "AbortError") {
+                    activateGuestCart();
+                    setUser(null);
+                }
             });
 
         return () => controller.abort();
@@ -41,6 +55,7 @@ const UserMenu = () => {
             const res = await fetch("/api/auth/logout", { method: "POST" });
             if (!res.ok) throw new Error("Could not log out. Please try again.");
 
+            activateGuestCart();
             setUser(null);
             toast.success("Logged out");
             router.refresh();

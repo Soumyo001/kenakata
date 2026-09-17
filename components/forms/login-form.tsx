@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { applyServerErrors } from "@/lib/helpers/form-helper";
 import { LoginSchema, LoginSchemaType } from "@/lib/validators/schema-validators/login.schema";
+import { activateUserCart } from "@/hooks/use-cart";
 
 const LoginForm = ({ redirectTo }: { redirectTo: string }) => {
     const router = useRouter();
@@ -41,10 +42,11 @@ const LoginForm = ({ redirectTo }: { redirectTo: string }) => {
                 applyServerErrors(setError, data);
                 return;
             }
+            activateUserCart(data.user.id);
 
             setIsRedirecting(true);
             toast.success(`Welcome back, ${data.user.name}`);
-            // replace, not push: pressing Back on the destination shouldn't return to a login form.
+            // pressing Back on the destination shouldn't return to a login form.
             router.replace(redirectTo);
         } catch {
             toast.error("Something went wrong. Please try again.");

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { applyServerErrors } from "@/lib/helpers/form-helper";
 import { RegisterSchema, RegisterSchemaType } from "@/lib/validators/schema-validators/register.schema";
+import { activateUserCart } from "@/hooks/use-cart";
 
 const RegisterForm = ({ redirectTo }: { redirectTo: string }) => {
     const router = useRouter();
@@ -41,6 +42,7 @@ const RegisterForm = ({ redirectTo }: { redirectTo: string }) => {
                 applyServerErrors(setError, data);
                 return;
             }
+            activateUserCart(data.user.id);
 
             setIsRedirecting(true);
             toast.success(`Welcome to Kenakata, ${data.user.name}`);
