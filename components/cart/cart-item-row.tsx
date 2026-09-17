@@ -19,7 +19,12 @@ const CartItemRow = ({ item, onQuantityChange, onRemove }: CartItemRowProps) => 
                 href={`/products/${item.id}`}
                 className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-muted sm:h-24 sm:w-24"
             >
-                <SafeImage src={item.image} alt={item.title} sizes="96px" className="object-cover" />
+                <SafeImage 
+                    src={item.image} 
+                    alt={item.title} 
+                    sizes="96px" 
+                    className="object-cover" 
+                />
             </Link>
 
             <div className="flex min-w-0 flex-1 flex-col">

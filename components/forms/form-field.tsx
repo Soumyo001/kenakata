@@ -2,11 +2,11 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 type FormFieldProps = {
-    id:         string;
-    label:      string;
-    error?:     string;
+    id: string;
+    label: string;
+    error?: string;
     className?: string;
-    children:   React.ReactNode;
+    children: React.ReactNode;
 };
 
 const FormField = ({ id, label, error, className, children }: FormFieldProps) => {

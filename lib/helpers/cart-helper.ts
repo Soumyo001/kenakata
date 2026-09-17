@@ -39,7 +39,6 @@ export function removeCartItem(items: CartItemType[], id: number): CartItemType[
 }
 
 export function updateCartItemQuantity(items: CartItemType[], id: number, quantity: number): CartItemType[] {
-    // Clamped rather than trusted: removing an item is a deliberate action (the trash button), not quantity 0.
     const clamped = Math.min(Math.max(quantity, 1), MAX_CART_QUANTITY);
     return items.map((item) => (item.id === id ? { ...item, quantity: clamped } : item));
 }

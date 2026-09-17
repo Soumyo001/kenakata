@@ -33,7 +33,7 @@ export const CheckoutSchema = ShippingDetailsSchema.extend({
     const expiry = data.cardExpiry ?? "";
 
     if (!CARD_NUMBER_REGEX.test(data.cardNumber ?? "")) {
-        ctx.addIssue({ code: "custom", path: ["cardNumber"], message: "Enter a 16-digit card number" });
+        ctx.addIssue({ code: "custom", path: ["cardNumber"], message: "Enter a valid 16-digit card number" });
     }
     if (!CARD_EXPIRY_REGEX.test(expiry)) {
         ctx.addIssue({ code: "custom", path: ["cardExpiry"], message: "Use MM/YY format" });
@@ -41,7 +41,7 @@ export const CheckoutSchema = ShippingDetailsSchema.extend({
         ctx.addIssue({ code: "custom", path: ["cardExpiry"], message: "This card has expired" });
     }
     if (!CARD_CVC_REGEX.test(data.cardCvc ?? "")) {
-        ctx.addIssue({ code: "custom", path: ["cardCvc"], message: "Enter the 3 or 4 digit code" });
+        ctx.addIssue({ code: "custom", path: ["cardCvc"], message: "Enter the CVC" });
     }
 });
 
