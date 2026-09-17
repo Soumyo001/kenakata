@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { OrderPayloadSchema } from "@/lib/validators/payload-validators/order.schema";
 import { getCartTotals, getOrderTotals } from "@/lib/helpers/cart-helper";
 import { DECLINED_TEST_CARD_LAST4, MOCK_PAYMENT_DELAY_MS } from "@/lib/data/constants";
+import { getCurrentUser } from "@/lib/auth/session";
 
 export const POST = async (req: Request) => {
     try {
+        const user = await getCurrentUser();
+        if (!user) {
+            return NextResponse.json({ message: "Please log in to place an order" }, { status: 401 });
+        }
+
         const body = await req.json();
         const parsed = OrderPayloadSchema.safeParse(body);
 

@@ -20,13 +20,19 @@ import {
     CheckoutSchemaType,
     ShippingDetailsSchema,
 } from "@/lib/validators/schema-validators/checkout.schema";
+import { UserType } from "@/lib/types";
 
 const PAYMENT_LABELS: Record<PaymentMethodType, { title: string; description: string }> = {
     cod:  { title: "Cash on delivery", description: "Pay when your order arrives" },
     card: { title: "Credit / debit card", description: "Test mode, no real charge" },
 };
 
-const CheckoutForm = ({ items }: { items: CartItemType[] }) => {
+type CheckoutFormProps = {
+    items: CartItemType[];
+    user:  UserType;
+};
+
+const CheckoutForm = ({ items, user }: CheckoutFormProps) => {
     const router = useRouter();
     const [isRedirecting, setIsRedirecting] = useState<boolean>(false);
 
@@ -38,8 +44,8 @@ const CheckoutForm = ({ items }: { items: CartItemType[] }) => {
     } = useForm<CheckoutSchemaType>({
         resolver: zodResolver(CheckoutSchema),
         defaultValues: {
-            fullName: "",
-            email: "",
+            fullName: user.name,
+            email: user.email,
             phone: "",
             address: "",
             city: "",

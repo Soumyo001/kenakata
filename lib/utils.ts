@@ -28,3 +28,14 @@ export function sanitizeImages(images: string[] | undefined): string[] {
 export function formatPrice(price: number): string {
     return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(price);
 }
+
+export function getInitials(name: string): string {
+    const initials = name
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((part) => part[0]?.toUpperCase() ?? "")
+        .join("");
+
+    return initials || "?";
+}

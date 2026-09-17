@@ -9,8 +9,9 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/use-cart";
 import { useIsClient } from "@/hooks/use-is-client";
 import { formatPrice } from "@/lib/utils";
+import { UserType } from "@/lib/types";
 
-const CheckoutView = () => {
+const CheckoutView = ({ user }: { user: UserType }) => {
     const isClient = useIsClient();
     const { items, totalItems, subtotal } = useCart();
 
@@ -33,7 +34,7 @@ const CheckoutView = () => {
     return (
         <div className="grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2">
-                <CheckoutForm items={items} />
+                <CheckoutForm items={items} user={user} />
             </div>
 
             <div className="order-first lg:order-0 lg:sticky lg:top-24 lg:self-start">

@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
-import { FALLBACK_IMAGE } from "@/lib/utils";
+import { type ReactNode, useState } from "react";
+import { FALLBACK_IMAGE, sanitizeImages } from "@/lib/utils";
 
 type SafeImageProps = {
     src: string;
@@ -9,12 +9,25 @@ type SafeImageProps = {
     sizes?: string;
     className?: string;
     preload?: boolean;
+    fallback?: ReactNode
 };
 
-const SafeImage = ({ src, alt, sizes, className, preload }: SafeImageProps) => {
+const SafeImage = ({ src, alt, sizes, className, preload, fallback }: SafeImageProps) => {
     const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
-    const imgSrc = !src || src === failedSrc ? FALLBACK_IMAGE : src;
+    const isLocalSrc = typeof src === "string" && src.startsWith("/");
+    const safeSrc = isLocalSrc
+        ? src
+        : sanitizeImages(src ? [src] : undefined)[0];
+
+    const isRejectedRemote = !isLocalSrc && safeSrc === FALLBACK_IMAGE;
+    const shouldFallback = !src || isRejectedRemote || safeSrc === failedSrc;
+
+    if (shouldFallback && fallback !== undefined) {
+        return <>{fallback}</>;
+    }
+
+    const imgSrc = shouldFallback ? FALLBACK_IMAGE : safeSrc;
 
     return (
         <Image
@@ -24,7 +37,7 @@ const SafeImage = ({ src, alt, sizes, className, preload }: SafeImageProps) => {
             preload={preload}
             sizes={sizes}
             className={className}
-            onError={() => setFailedSrc(src)}
+            onError={() => setFailedSrc(safeSrc)}
         />
     );
 };

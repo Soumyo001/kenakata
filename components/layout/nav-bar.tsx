@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Button } from "../ui/button"
 import Container from "./container"
 import CartButton from "./cart-button"
+import UserMenu from "./user-menu"
 
 const Navbar = () => {
   return (
@@ -22,6 +23,7 @@ const Navbar = () => {
                     </Link>
                 </Button>
                 <CartButton/>
+                <UserMenu/>
                 <ThemeToggle/>
             </nav>
         </Container>
