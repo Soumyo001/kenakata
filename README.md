@@ -1,5 +1,7 @@
 # KenaKata.com
 
+## Project Overview
+
 KenaKata.com is a modern, responsive e-commerce storefront built with Next.js App Router, TypeScript, Tailwind CSS, and React.
 
 The application provides a complete shopping experience with product discovery, filtering and sorting, product details, persistent carts, authenticated checkout, account management, mock payment processing, and per-user transaction history.
@@ -32,6 +34,7 @@ The application provides a complete shopping experience with product discovery, 
 - Numbered pagination
 - URL-based filter state
 - Responsive mobile and desktop layouts
+- Loading, empty, and error states
 
 ### Product Details
 
@@ -224,11 +227,13 @@ kenakata/
 │   │   │
 │   │   ├── checkout/
 │   │   │   ├── page.tsx
+│   │   │   ├── loading.tsx
 │   │   │   └── success/
 │   │   │       └── page.tsx
 │   │   │
 │   │   └── account/
-│   │       └── page.tsx
+│   │       ├── page.tsx
+│   │       └── loading.tsx
 │   │
 │   ├── (auth)/
 │   │   ├── layout.tsx
@@ -635,20 +640,51 @@ This keeps invalid image data from breaking product cards, galleries, carts, or 
 
 ---
 
-## Rendering Strategy
+## Rendering Strategy Decisions
 
 Different routes use rendering strategies suited to their content.
 
 | Route | Strategy |
 | --- | --- |
 | `/` | ISR |
-| `/products` | Dynamic server rendering |
-| `/products/[id]` | Static generation + ISR |
+| `/products` | SSR / dynamic server rendering |
+| `/products/[id]` | SSG + ISR |
 | `/cart` | Server-rendered shell + client cart store |
 | `/checkout` | Protected server shell + client checkout |
 | `/account` | Protected Server Component + client transaction history |
 
-Product details use dynamic route parameters, while listing state is represented through URL search parameters.
+Product details use dynamic route parameters, while listing state is represented through URL search parameters. Data fetching is centralized in the API layer, where route-appropriate caching and revalidation are applied.
+
+---
+
+## Next.js Concepts Demonstrated
+
+KenaKata.com demonstrates the following Next.js App Router concepts throughout the project:
+
+- **App Router architecture** using route groups, layouts, pages, Route Handlers, loading states, error boundaries, and not-found handling.
+- **Server Components** as the default for pages, layouts, product data, and authenticated server-side checks.
+- **Client Components** only where browser APIs, local state, event handlers, forms, or local storage are required.
+- **SSR / dynamic server rendering** for the product listing page, which depends on URL search parameters.
+- **SSG** for product detail pages through `generateStaticParams`.
+- **ISR** for the home page and product detail pages using timed revalidation.
+- **Dynamic routes** with `/products/[id]`.
+- **Nested layouts** through the root, storefront, and authentication layouts.
+- **Loading boundaries** with route-level `loading.tsx` files.
+- **Error handling** with `error.tsx`, `not-found.tsx`, and validated API responses.
+- **Data fetching patterns** through async Server Components and a centralized typed API layer.
+- **Caching and revalidation** with route-appropriate cache durations in the shared data layer.
+- **Route Handlers** for login, registration, logout, session handling, and order processing.
+- **Search parameters** for product search, filtering, sorting, and pagination.
+- **Streaming with Suspense** for product results and related-product sections.
+
+## Tradeoffs Made
+
+- Server Components are used by default, while Client Components are limited to features that need browser APIs, state, or event handlers.
+- Product listing state is kept in URL search parameters so search, filters, sorting, and pagination remain navigable and shareable.
+- Cart and transaction history use `useSyncExternalStore` with browser storage instead of a global React Context provider.
+- Guest carts and authenticated carts are stored separately, and guest items are merged into the signed-in user's cart after authentication.
+- Authentication uses a lightweight proxy check for navigation together with server-side session verification for protected content.
+- Checkout uses an application Route Handler for order validation and mock payment processing so the complete purchase flow stays inside the project architecture.
 
 ---
 
@@ -706,6 +742,19 @@ A custom `xs` breakpoint is available at `360px` for small-screen layout control
 
 ---
 
+## Performance Considerations
+
+- Server Components are used for non-interactive UI to keep unnecessary client-side JavaScript low.
+- Route-appropriate SSR, SSG, and ISR strategies are used across the storefront.
+- Product and category requests use caching and revalidation through the shared data layer.
+- Product search is debounced before updating the listing URL.
+- Next.js image optimization and responsive image sizing are used throughout product and account interfaces.
+- Loading skeletons and route-level loading states provide immediate feedback during navigation and data transitions.
+- Interactive behavior is isolated into focused client islands such as filters, cart controls, forms, galleries, and account history.
+- Layouts and grids are designed responsively for mobile, tablet, and desktop screens.
+
+---
+
 ## Getting Started
 
 ### Prerequisites
@@ -715,7 +764,7 @@ Make sure Node.js and npm are installed.
 ### Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Soumyo001/kenakata.git
 cd kenakata
 ```
 
@@ -857,90 +906,31 @@ The authenticated cart remains associated with that account, while the browser r
 
 ---
 
-## State Persistence
+## Challenges Faced
 
-The application persists important client-side shopping state.
-
-### Cart
-
-```text
-Guest:
-kenakata-cart
-
-Authenticated:
-kenakata-cart:user:<user-id>
-```
-
-### Active Cart Owner
-
-```text
-kenakata-cart-owner
-```
-
-### Transaction History
-
-```text
-kenakata-orders:user:<user-id>
-```
-
-All stored cart and transaction data is validated before it is consumed by the UI.
+- Building persistent cart state without hydration mismatches between server rendering and browser storage.
+- Keeping guest carts and authenticated user carts isolated while still merging guest items after login or registration.
+- Synchronizing cart and transaction-history updates across browser tabs.
+- Preserving the originally requested protected route through the login and registration flow.
+- Handling invalid or failed image sources without breaking product cards, galleries, carts, or account views.
+- Keeping product filtering, sorting, pagination, and browser navigation synchronized through URL state.
+- Maintaining responsive layouts and avoiding horizontal overflow on small mobile screens.
 
 ---
 
-## Key Application Flows
+## Future Improvements
 
-### Guest to Authenticated Shopping
-
-```text
-Guest adds products
-        ↓
-Guest cart
-        ↓
-Login / Register
-        ↓
-Guest cart merges with user cart
-        ↓
-User continues shopping
-```
-
-### Returning User
-
-```text
-Login
-  ↓
-User session restored
-  ↓
-User-specific cart activated
-  ↓
-Previous cart available
-```
-
-### Successful Purchase
-
-```text
-User cart
-    ↓
-Checkout
-    ↓
-Validated order
-    ↓
-Confirmed transaction
-    ↓
-Transaction history
-    ↓
-Cart cleared
-```
+- Add automated unit and end-to-end test coverage.
+- Add wishlist and product review features.
+- Add richer account and order-management experiences.
+- Add subtle interface animations and transitions.
+- Add additional product discovery and personalization features.
+- Add the optional admin dashboard for product, category, and user management.
 
 ---
 
 ## Live Application
 
 ```text
-kenakata-six-nu.vercel.app
+https://kenakata-six-nu.vercel.app
 ```
-
----
-
-## KenaKata.com
-
-A complete e-commerce storefront focused on modern Next.js architecture, reusable components, responsive design, typed data handling, persistent shopping state, authenticated checkout, and account-based order history.
