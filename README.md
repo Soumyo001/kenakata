@@ -937,13 +937,7 @@ Cart cleared
 ## Live Application
 
 ```text
-<deployment-url>
-```
-
-## Repository
-
-```text
-<repository-url>
+kenakata-six-nu.vercel.app
 ```
 
 ---
